@@ -1,14 +1,5 @@
-const user = require('express').Router();
-const globalR = require('../globalR');
-const Users = require('../users/users-model.js');
-
-user.get('/', restricted, (req, res) => {
-  Users.find()
-    .then(users => {
-      res.json(users);
-    })
-    .catch(err => res.send(err));
-});
+const Users = require('./users/users-model');
+const bcrypt = require('bcrypt');
 
 function restricted(req, res, next) {
   const { username, password } = req.headers;
@@ -32,12 +23,4 @@ function restricted(req, res, next) {
   }
 }
 
-user.get('/restricted/18andUp', globalR, (req, res) => {
-  Users.find()
-    .then(users => {
-      res.json(users);
-    })
-    .catch(err => res.send(err));
-});
-
-module.exports = user;
+module.exports = restricted;
