@@ -2,7 +2,7 @@ const user = require('express').Router();
 const globalR = require('../globalR');
 const Users = require('../users/users-model.js');
 
-user.get('/', restricted, (req, res) => {
+user.get('/', globalR, (req, res) => {
   Users.find()
     .then(users => {
       res.json(users);
