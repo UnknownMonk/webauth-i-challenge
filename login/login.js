@@ -10,6 +10,7 @@ login.post('/', (req, res) => {
     .then(user => {
       // check tha password guess against the database
       if (user && bcrypt.compareSync(password, user.password)) {
+        req.session.username = user.username;
         res
           .status(200)
           .json({ message: `Welcome ${user.username}!eat this cookie` });

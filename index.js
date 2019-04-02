@@ -3,7 +3,11 @@ const helmet = require('helmet');
 const userRoutes = require('./users/user-routes');
 const registerRoutes = require('./register/register-routes');
 const loginRoutes = require('./login/login');
+const logoutRoutes = require('./logout/logoutRoutes');
 const session = require('express-session');
+const db = require('./data/dbConfig');
+
+const KnexSessionStore = require('connect-session-knex')(session);
 
 const server = express();
 
@@ -12,11 +16,19 @@ const sessionConfig = {
   secret: 'Shhhhh',
   cookie: {
     maxAge: 1000 * 60 * 15,
-    secure: false
+    secure: false,
+    httpOnly: true
   },
-  httpOnly: true,
   resave: false,
-  saveUnitialized: false
+  saveUninitialized: false,
+
+  store: new KnexSessionStore({
+    knex: db,
+    tablename: 'sessions',
+    sidfieldname: 'sid',
+    createtable: true,
+    clearInterval: 100 * 60 * 60
+  })
 };
 
 server.use(helmet());
@@ -25,6 +37,7 @@ server.use(session(sessionConfig));
 server.use('/api/users', userRoutes);
 server.use('/api/register', registerRoutes);
 server.use('/api/login', loginRoutes);
+server.use('/api/logout', logoutRoutes);
 
 server.get('/', (req, res) => {
   res.status(200).json('Home route working');
